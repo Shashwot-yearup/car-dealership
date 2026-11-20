@@ -1,4 +1,8 @@
 package com.pluralsight;
 
-public class DealerShipAPP {
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class DealerShipApp {
+
 }
