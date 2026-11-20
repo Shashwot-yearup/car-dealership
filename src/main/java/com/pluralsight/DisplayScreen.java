@@ -6,7 +6,8 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.graphics.TextGraphics;
-
+import com.googlecode.lanterna.TextColor;
+import java.awt.*;
 import java.io.IOException;
 
 public class DisplayScreen {
@@ -21,11 +22,17 @@ public class DisplayScreen {
         screen.startScreen();
 
         int selected = 0;
-
+        
         String[] options = {
+                "By price range",
+                "By make/modle",
+                "By year range",
+                "By color",
+                "By mileage range",
+                "By vehicle type",
+                "list All vehicles",
                 "Add Vehicle",
-                "Search Vehicle",
-                "View Inventory",
+                "Remove Vehicle",
                 "Exit"
         };
 
@@ -37,7 +44,9 @@ public class DisplayScreen {
 
             TextGraphics graphics = screen.newTextGraphics();
 
-            graphics.putString(5, 2, "=== DEALERSHIP SYSTEM ===");
+            graphics.setForegroundColor(TextColor.ANSI.RED);
+            graphics.putString(5, 1, " DEALERSHIP SYSTEM ");
+            graphics.putString(5, 3, "Find your Vehicle:");
 
             // Display menu
             for (int i = 0; i < options.length; i++) {
@@ -49,7 +58,7 @@ public class DisplayScreen {
                 }
             }
 
-            graphics.putString(5, 11, "Use UP/DOWN and ENTER");
+            graphics.putString(4, 18, "Use UP/DOWN and ENTER");
 
             screen.refresh();
 
@@ -76,14 +85,17 @@ public class DisplayScreen {
 
                 case Enter:
 
-                    if (selected == 0) {
-                        addVehicleScreen(screen);
-                    } else if (selected == 1) {
-                        searchVehicleScreen(screen);
-                    } else if (selected == 2) {
-                        // View Inventory
-                    } else if (selected == 3) {
-                        running = false;
+                    switch (selected) {
+                        case 0 -> addVehicleScreen(screen);
+                        //case 1 -> // by price
+                        //case 2 -> //
+                        //case 3 ->
+                        //case 4 ->
+                        //case 5 ->
+                        //case 6 ->
+                        //case 7 ->
+                        case 11 -> running = false;
+                        default -> throw new IllegalStateException("Unexpected value: " + selected);
                     }
 
                     break;
@@ -105,7 +117,7 @@ public class DisplayScreen {
         while (true) {
 
             // Display what the user types
-            graphics.putString(15, y, input.toString() + " ");
+            graphics.putString(14, y, input.toString() + " ");
             screen.refresh();
 
             KeyStroke key = screen.readInput();
@@ -131,7 +143,7 @@ public class DisplayScreen {
 
         TextGraphics graphics = screen.newTextGraphics();
 
-        graphics.putString(5, 2, "========== ADD VEHICLE ==========");
+        graphics.putString(3, 2, " ADD VEHICLE ");
 
         graphics.putString(5, 5, "VIN:");
         graphics.putString(5, 6, "Make:");
