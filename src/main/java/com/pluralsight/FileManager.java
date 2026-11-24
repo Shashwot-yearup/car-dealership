@@ -1,11 +1,97 @@
 package com.pluralsight;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.io.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+
 public class FileManager {
+
+    private String csvFile = "inventory.csv";
+
+    public Dealership getDealership() {
+
+        //create the dealership variable
+        Dealership dealership = null;
+
+        try{
+            //create a reader to read the csv file
+            BufferedReader inventoryReader = new BufferedReader(new FileReader(csvFile));
+
+            //read the first line (the dealership informationm
+            String dealershipInfo = inventoryReader.readLine();
+
+            //instantiate the dealership if the dealershipInfo was not null (was found in the file)
+            if(dealershipInfo != null){
+
+                String[] dealerShipParts = dealershipInfo.split("\\|");
+                String name = dealerShipParts[0];
+                String address = dealerShipParts[1];
+                String phone = dealerShipParts[2];
+
+                dealership = new Dealership(name, address, phone);
+
+            }
+
+            String vehicleLine;
+            while((vehicleLine = inventoryReader.readLine()) != null){
+
+                String[] vehicleParts = vehicleLine.split("\\|");
+                int vin = Integer.parseInt(vehicleParts[0]);
+                int year = Integer.parseInt(vehicleParts[1]);
+                String make = vehicleParts[2];
+                String model = vehicleParts[3];
+                String type = vehicleParts[4];
+                String color = vehicleParts[5];
+                int odometer = Integer.parseInt(vehicleParts[6]);
+                BigDecimal price = new BigDecimal(vehicleParts[7]);
+
+                //create the vehicle from the parts
+                Vehicle newCar = new Vehicle(vin, year, make, model, type, color, odometer, price);
+
+                //add the vehicle to the dealership
+                dealership.addVehicle(newCar);
+
+            }
+
+
+        }catch(Exception e){
+
+            System.out.println("error reading the file" + e.getMessage());
+
+        }
+
+        //after we do all the work to create the dealership we return it
+        return dealership;
+
+    }
+
+    public void saveDealership(Dealership dealership){
+        try {
+            // Open the file for writing (overwrites existing file)
+            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(csvFile));
+
+            // Write dealership header info (first line)
+            fileWriter.write(dealership.getName() + "|" + dealership.getAddress() + "|" + dealership.getPhone());
+            fileWriter.newLine();
+
+            // Write one line for each vehicle
+            ArrayList<Vehicle> inventory = dealership.getAllVehicles();
+            for (Vehicle vehicle : inventory) {
+                String line = vehicle.getVin() + "|" +
+                        vehicle.getYear() + "|" +
+                        vehicle.getMake() + "|" +
+                        vehicle.getModel() + "|" +
+                        vehicle.getVehicleType() + "|" +
+                        vehicle.getColor() + "|" +
+                        vehicle.getOdometer() + "|" +
+                        vehicle.getPrice();
+                fileWriter.write(line);
+                fileWriter.newLine();
+            }
+
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.println("Error writing dealership file: " + e.getMessage());
+        }
+    }
 }

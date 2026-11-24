@@ -19,6 +19,18 @@ public class Dealership {
         this.inventory = new ArrayList<>();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
     //add vehicles to the inventory
     public void addVehicle(Vehicle vehicle) {
         this.inventory.add(vehicle);
